@@ -1,82 +1,43 @@
 #include <stdio.h>
 
-int main() {
-    int choix;
-    float coef, cc, exam, moyenne;
-    float total_points = 0;
-    float total_coeffs = 0;
-    int nombre_modules = 0;
+int main(void) {
+    int n;
+    float tableau_notes[100], moyenne, somme = 0.0f, note_maximal = 0.0f, *p;
 
-    do {
-        printf("\n=========================================\n");
-        printf("   CALCULATEUR DE NOTES - EMSI (Simple)\n");
-        printf("=========================================\n");
-        printf("1. Ajouter un module et calculer sa moyenne\n");
-        printf("2. Afficher la moyenne generale du semestre\n");
-        printf("3. Quitter\n");
-        printf("Votre choix : ");
-        
-        scanf("%d", &choix);
+    printf("Ce programme permet de gerer les notes des etudiants\n");
+    printf("\nSaisir le nombre de notes : ");
+    if (scanf("%d", &n) != 1 || n <= 0 || n > 100) {
+        printf("\nErreur : le nombre de notes doit etre compris entre 1 et 100.\n");
+        return 1;
+    }
 
-        // --- FONCTION CONDITIONNELLE PRINCIPALE (switch) ---
-        switch (choix) {
-            case 1:
-                printf("\n--- Ajout d'un module ---\n");
-                
-                printf("Entrez le coefficient du module : ");
-                scanf("%f", &coef);
-                
-                printf("Entrez la note de CC (sur 20) : ");
-                scanf("%f", &cc);
-                
-                printf("Entrez la note d'Examen (sur 20) : ");
-                scanf("%f", &exam);
+    for (p = tableau_notes; p < tableau_notes + n; p++) {
+        float note;
 
-                // Validation conditionnelle basique des notes
-                if (cc < 0 || cc > 20 || exam < 0 || exam > 20 || coef <= 0) {
-                    printf("[ERREUR] Les notes doivent etre entre 0 et 20, et le coef > 0.\n");
-                } else {
-                    // Calcul de la moyenne du module : 40% CC + 60% Examen
-                    moyenne = (cc * 0.4f) + (exam * 0.6f);
-                    printf("--> Moyenne de ce module : %.2f / 20\n", moyenne);
+        do {
+            printf("\nSaisir l'element %d : ", (int)(p - tableau_notes) + 1);
+            if (scanf("%f", &note) != 1) {
+                printf("\nErreur : veuillez saisir une note valide.\n");
+                while (getchar() != '\n');
+                note = -1.0f;
+                continue;
+            }
 
-                    // Cumul pour la moyenne générale
-                    total_points += moyenne * coef;
-                    total_coeffs += coef;
-                    nombre_modules++;
-                }
-                break;
+            if (note < 0.0f || note > 20.0f) {
+                printf("\nErreur : la note doit etre comprise entre 0 et 20.");
+            }
+        } while (note < 0.0f || note > 20.0f);
 
-            case 2:
-                // --- FONCTION CONDITIONNELLE (if / else) ---
-                if (nombre_modules == 0) {
-                    printf("\nAucun module enregistre pour le moment.\n");
-                } else {
-                    float moyenne_generale = total_points / total_coeffs;
-                    
-                    printf("\n=========================================\n");
-                    printf("Nombre de modules valides : %d\n", nombre_modules);
-                    printf("Moyenne Generale : %.2f / 20\n", moyenne_generale);
-                    
-                    // Condition de validation du semestre
-                    if (moyenne_generale >= 10.0f) {
-                        printf("Statut : SEMESTRE VALIDE \n");
-                    } else {
-                        printf("Statut : RATTRATAGE / NON VALIDE \n");
-                    }
-                    printf("=========================================\n");
-                }
-                break;
+        *p = note;
+        somme += note;
 
-            case 3:
-                printf("\nAu revoir et bon courage pour vos etudes a l'EMSI !\n");
-                break;
-
-            default:
-                printf("\n[ERREUR] Choix invalide. Veuillez choisir entre 1, 2 et 3.\n");
+        if (note > note_maximal) {
+            note_maximal = note;
         }
+    }
 
-    } while (choix != 3); // La boucle continue tant qu'on ne choisit pas de quitter
-
+    moyenne = somme / n;
+    printf("\nLa note maximale est : %.2f ", note_maximal);
+    printf("\nLa moyenne des notes est : %.2f\n", moyenne);
     return 0;
 }
